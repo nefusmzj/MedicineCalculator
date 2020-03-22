@@ -100,33 +100,39 @@ void MainWindow::on_pushButtonCal_clicked()
         }
     }
 
-     QDateEdit *DateEditValLastChange = (QDateEdit *)ui->DetailTable->cellWidget(MeetCount-1,0);
-     QLineEdit *UseEditValLastChange = (QLineEdit *)ui->DetailTable->cellWidget(MeetCount - 1,1);
+    int LastMeet2LastChangeUse = 0;
+    int LastMeet2LastChangeSegUse = 0;
+    float Res  = 0;
+    int ToDays = 0;
+    QString ToDateStr;
 
-     int LastMeet2LastChangeDays = DateEditValLastChange->date().daysTo(LastMeetDate);
-     if(MorningOrNightFlag == 0){
-         LastMeet2LastChangeDays -=1;
-     }
+    if(MeetCount == 0){
+        Res = OriginNumber - (OriginDate.daysTo(LastMeetDate) * OriginDose);
+        ToDays = Res / OriginDose;
+    }else{
+        QDateEdit *DateEditValLastChange = (QDateEdit *)ui->DetailTable->cellWidget(MeetCount-1,0);
+        QLineEdit *UseEditValLastChange = (QLineEdit *)ui->DetailTable->cellWidget(MeetCount - 1,1);
 
-     //qDebug()<<"最后调整用量到最后一次访视的天数："<<LastMeet2LastChangeDays;
-     int LastMeet2LastChangeUse = UseEditValLastChange->text().toFloat();
-     //qDebug()<<"最后调整用量到最后一次访视的用量："<<LastMeet2LastChangeUse;
-
-     int LastMeet2LastChangeSegUse = LastMeet2LastChangeDays * LastMeet2LastChangeUse;
-     //qDebug()<<"最后调整用量到最后一次访视的累计用量："<<LastMeet2LastChangeSegUse;
-
-     float Res =  OriginNumber - TotalUsed - LastMeet2LastChangeSegUse;
+        int LastMeet2LastChangeDays = DateEditValLastChange->date().daysTo(LastMeetDate);
+        if(MorningOrNightFlag == 0){
+            LastMeet2LastChangeDays -=1;
+        }
+        //qDebug()<<"最后调整用量到最后一次访视的天数："<<LastMeet2LastChangeDays;
+        LastMeet2LastChangeUse = UseEditValLastChange->text().toFloat();
+        //qDebug()<<"最后调整用量到最后一次访视的用量："<<LastMeet2LastChangeUse;
+        LastMeet2LastChangeSegUse = LastMeet2LastChangeDays * LastMeet2LastChangeUse;
+        //qDebug()<<"最后调整用量到最后一次访视的累计用量："<<LastMeet2LastChangeSegUse;
+        Res =  OriginNumber - TotalUsed - LastMeet2LastChangeSegUse;
+        ToDays = Res / LastMeet2LastChangeUse;
+    }
 
      //qDebug()<<"剩余药量："<<Res;
 
      ui->label_ResidueData->setNum(Res);
-
-     int ToDays = Res / LastMeet2LastChangeUse;
+     ToDateStr = LastMeetDate.addDays(ToDays).toString("yyyy年MM月dd日");
 
      //qDebug()<<"剩余可用天数："<<ToDays;
-
-     QString ToDate = LastMeetDate.addDays(ToDays).toString("yyyy年MM月dd日");
-     ui->label_NoDate->setText(ToDate);
+     ui->label_NoDate->setText(ToDateStr);
 
 }
 
