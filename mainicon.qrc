@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>git-compare.png</file>
+        <file>calculator.png</file>
+        <file>exeico.ico</file>
+    </qresource>
+</RCC>
